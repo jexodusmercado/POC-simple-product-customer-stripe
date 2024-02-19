@@ -35,6 +35,10 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	api.handler.Use(cors.New(corsConfig))
 	api.handler.Use(middleware.AddRequestID(api.config))
 
+	test := api.handler.Group("test")
+
+	test.GET("/email", api.testEmail)
+
 	payment := api.handler.Group("payments")
 
 	payment.POST("/create-payment-intent", api.CreatePaymentIntent)
@@ -58,7 +62,6 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 
 	transaction.GET("", api.GetTransactions)
 	transaction.GET("/:id", api.GetTransaction)
-
 
 	return api
 }

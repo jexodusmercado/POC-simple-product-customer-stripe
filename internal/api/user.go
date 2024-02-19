@@ -6,7 +6,7 @@ import (
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
 )
 
-func (api *API) CreateUser (c *gin.Context) {
+func (api *API) CreateUser(c *gin.Context) {
 	var req models.CreateUserRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -27,7 +27,7 @@ func (api *API) CreateUser (c *gin.Context) {
 	c.JSON(200, gin.H{})
 }
 
-func (api *API) GetUsers (c *gin.Context) {
+func (api *API) GetUsers(c *gin.Context) {
 	users, err := models.GetUsers(api.db)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -39,7 +39,7 @@ func (api *API) GetUsers (c *gin.Context) {
 	c.JSON(200, users)
 }
 
-func (api *API) GetUser (c *gin.Context) {
+func (api *API) GetUser(c *gin.Context) {
 	ID := c.Query("id")
 
 	userID, err := uuid.Parse(ID)
@@ -49,7 +49,6 @@ func (api *API) GetUser (c *gin.Context) {
 		})
 		return
 	}
-	
 
 	user, err := models.GetUserByID(api.db, userID)
 	if err != nil {

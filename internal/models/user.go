@@ -6,27 +6,29 @@ import (
 )
 
 type User struct {
-	ID uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"ID,omitempty"`
-	FirstName string `gorm:"type:varchar(255)" json:"first_name,omitempty"`
-	LastName string `gorm:"type:varchar(255)" json:"last_name,omitempty"`
-	Email string `gorm:"type:varchar(255)" json:"email,omitempty"`
-	ZipCode string `gorm:"type:varchar(255)" json:"zip_code,omitempty"`
+	ID          uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"ID,omitempty"`
+	FirstName   string    `gorm:"type:varchar(255); not null;" json:"first_name,omitempty"`
+	LastName    string    `gorm:"type:varchar(255); not null;" json:"last_name,omitempty"`
+	Email       string    `gorm:"type:varchar(255); not null;" json:"email,omitempty"`
+	ZipCode     string    `gorm:"type:varchar(255); not null;" json:"zip_code,omitempty"`
+	PhoneNumber string    `gorm:"type:varchar(255)" json:"phone_number,omitempty"`
 }
 
 type CreateUserRequest struct {
-	FirstName string `json:"first_name,omitempty" binding:"required"`
-	LastName string `json:"last_name,omitempty" binding:"required"`
-	Email string `json:"email,omitempty" binding:"required"`
-	ZipCode string `json:"zip_code,omitempty" binding:"required"`
+	FirstName   string `json:"first_name,omitempty" binding:"required"`
+	LastName    string `json:"last_name,omitempty" binding:"required"`
+	Email       string `json:"email,omitempty" binding:"required"`
+	ZipCode     string `json:"zip_code,omitempty" binding:"required"`
+	PhoneNumber string `json:"phone_number,omitempty"`
 }
 
 func CreateUser(tx *gorm.DB, req *CreateUserRequest) (User, error) {
 
 	user := User{
 		FirstName: req.FirstName,
-		LastName: req.LastName,
-		Email: req.Email,
-		ZipCode: req.ZipCode,
+		LastName:  req.LastName,
+		Email:     req.Email,
+		ZipCode:   req.ZipCode,
 	}
 
 	err := tx.Create(&user).Error
@@ -58,9 +60,9 @@ func UpdateUser(tx *gorm.DB, id uuid.UUID, req *CreateUserRequest) error {
 
 	user := User{
 		FirstName: req.FirstName,
-		LastName: req.LastName,
-		Email: req.Email,
-		ZipCode: req.ZipCode,
+		LastName:  req.LastName,
+		Email:     req.Email,
+		ZipCode:   req.ZipCode,
 	}
 
 	return tx.Model(&user).Where("id = ?", id).Updates(&user).Error

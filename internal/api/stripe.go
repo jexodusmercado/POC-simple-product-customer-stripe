@@ -52,10 +52,16 @@ func (api *API) Webhook(c *gin.Context) {
 			return
 		}
 
+		price := product.BasePrice
+
+		if product.DiscountedPrice > 0 {
+			price = product.DiscountedPrice
+		}
+
 		err = models.CreateTransaction(api.db, &models.CreateTransactionRequest{
 			ProductID:                       product.ID,
 			UserID:                          user.ID,
-			Amount:                          product.Price,
+			Amount:                          price,
 			StripePaymentIntentID:           paymentIntent.ID,
 			StripePaymentIntentClientSecret: paymentIntent.ClientSecret,
 		})
@@ -93,8 +99,14 @@ func (api *API) CreatePaymentIntent(c *gin.Context) {
 		return
 	}
 
+	price := product.BasePrice
+
+	if product.DiscountedPrice > 0 {
+		price = product.DiscountedPrice
+	}
+
 	paymentParams := &stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(int64(product.Price * 100)),
+		Amount:   stripe.Int64(int64(price * 100)),
 		Currency: stripe.String(string(stripe.CurrencyUSD)),
 		PaymentMethodTypes: stripe.StringSlice([]string{
 			"card",
@@ -169,8 +181,14 @@ func (api *API) UpdatePaymentIntent(c *gin.Context) {
 		return
 	}
 
+	price := product.BasePrice
+
+	if product.DiscountedPrice > 0 {
+		price = product.DiscountedPrice
+	}
+
 	paymentParams := &stripe.PaymentIntentParams{
-		Amount: stripe.Int64(int64(product.Price * 100)),
+		Amount: stripe.Int64(int64(price * 100)),
 		Metadata: map[string]string{
 			"product_id": req.ProductID.String(),
 			"first_name": req.FirstName,

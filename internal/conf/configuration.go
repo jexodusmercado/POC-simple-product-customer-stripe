@@ -7,17 +7,19 @@ import (
 )
 
 type GlobalConfig struct {
-	APPLICATION_NAME  string `mapstructure:"APPLICATION_NAME"`
-	APPLICATION_ENV   string `mapstructure:"APPLICATION_ENV"`
-	VERSION           string `mapstructure:"VERSION"`
-	DB_HOST           string `mapstructure:"DB_HOST"`
-	DB_USER           string `mapstructure:"DB_USER"`
-	DB_PASSWORD       string `mapstructure:"DB_PASSWORD"`
-	DB_NAME           string `mapstructure:"DB_NAME"`
-	DB_PORT           string `mapstructure:"DB_PORT"`
-	JWT_SECRET        string `mapstructure:"JWT_SECRET"`
-	RequestIDHeader   string `mapstructure:"REQUEST_ID_HEADER"`
-	STRIPE_SECRET_KEY string `mapstructure:"STRIPE_SECRET_KEY"`
+	APPLICATION_NAME    string `mapstructure:"APPLICATION_NAME"`
+	APPLICATION_ENV     string `mapstructure:"APPLICATION_ENV"`
+	VERSION             string `mapstructure:"VERSION"`
+	DB_HOST             string `mapstructure:"DB_HOST"`
+	DB_USER             string `mapstructure:"DB_USER"`
+	DB_PASSWORD         string `mapstructure:"DB_PASSWORD"`
+	DB_NAME             string `mapstructure:"DB_NAME"`
+	DB_PORT             string `mapstructure:"DB_PORT"`
+	JWT_SECRET          string `mapstructure:"JWT_SECRET"`
+	RequestIDHeader     string `mapstructure:"REQUEST_ID_HEADER"`
+	STRIPE_SECRET_KEY   string `mapstructure:"STRIPE_SECRET_KEY"`
+	SENDGRID_API_KEY    string `mapstructure:"SENDGRID_API_KEY"`
+	SENDGRID_EMAIL_FROM string `mapstructure:"SENDGRID_EMAIL_FROM"`
 }
 
 var (

@@ -6,7 +6,7 @@ import (
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
 )
 
-func (api *API) CreateProduct (c *gin.Context) {
+func (api *API) CreateProduct(c *gin.Context) {
 
 	var req models.CreateProductRequest
 
@@ -25,10 +25,10 @@ func (api *API) CreateProduct (c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{})
+	c.JSON(200, nil)
 }
 
-func (api *API) GetProducts (c *gin.Context) {
+func (api *API) GetProducts(c *gin.Context) {
 	products, err := models.GetProducts(api.db)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -40,7 +40,7 @@ func (api *API) GetProducts (c *gin.Context) {
 	c.JSON(200, products)
 }
 
-func (api *API) GetProduct (c *gin.Context) {
+func (api *API) GetProduct(c *gin.Context) {
 	ID := c.Query("id")
 
 	productID, err := uuid.Parse(ID)
