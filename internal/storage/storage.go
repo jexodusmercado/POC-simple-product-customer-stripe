@@ -48,5 +48,10 @@ func MigrateDatabase(tx *gorm.DB) {
 	if err != nil {
 		panic("Failed to migrate user")
 	}
-	
+
+	err = tx.AutoMigrate(&models.Inquiry{})
+	if err != nil {
+		panic("Failed to migrate inquiry")
+	}
+
 }
