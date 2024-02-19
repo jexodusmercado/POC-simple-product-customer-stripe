@@ -9,7 +9,7 @@ type User struct {
 	ID          uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"ID,omitempty"`
 	FirstName   string    `gorm:"type:varchar(255); not null;" json:"first_name,omitempty"`
 	LastName    string    `gorm:"type:varchar(255); not null;" json:"last_name,omitempty"`
-	Email       string    `gorm:"type:varchar(255); not null;" json:"email,omitempty"`
+	Email       string    `gorm:"type:varchar(255); unique; not null;" json:"email,omitempty"`
 	ZipCode     string    `gorm:"type:varchar(255); not null;" json:"zip_code,omitempty"`
 	PhoneNumber string    `gorm:"type:varchar(255)" json:"phone_number,omitempty"`
 }
@@ -51,6 +51,15 @@ func GetUserByID(tx *gorm.DB, id uuid.UUID) (User, error) {
 	var user User
 
 	err := tx.Where("id = ?", id).First(&user).Error
+
+	return user, err
+
+}
+
+func GetUserByEmail(tx *gorm.DB, email string) (User, error) {
+	var user User
+
+	err := tx.Where("email = ?", email).First(&user).Error
 
 	return user, err
 

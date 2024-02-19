@@ -40,16 +40,21 @@ func (api *API) Webhook(c *gin.Context) {
 			return
 		}
 
-		user, err := models.CreateUser(api.db, &models.CreateUserRequest{
-			FirstName: paymentIntent.Metadata["first_name"],
-			LastName:  paymentIntent.Metadata["last_name"],
-			Email:     paymentIntent.Metadata["email"],
-			ZipCode:   paymentIntent.Metadata["zip_code"],
-		})
+		var user models.User
 
+		user, err = models.GetUserByEmail(api.db, paymentIntent.Metadata["email"])
 		if err != nil {
-			fmt.Println("Error creating user: ", err.Error())
-			return
+			user, err = models.CreateUser(api.db, &models.CreateUserRequest{
+				FirstName: paymentIntent.Metadata["first_name"],
+				LastName:  paymentIntent.Metadata["last_name"],
+				Email:     paymentIntent.Metadata["email"],
+				ZipCode:   paymentIntent.Metadata["zip_code"],
+			})
+
+			if err != nil {
+				fmt.Println("Error creating user: ", err.Error())
+				return
+			}
 		}
 
 		price := product.BasePrice
