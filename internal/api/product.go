@@ -25,7 +25,7 @@ func (api *API) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, nil)
+	c.JSON(200, gin.H{})
 }
 
 func (api *API) GetProducts(c *gin.Context) {
