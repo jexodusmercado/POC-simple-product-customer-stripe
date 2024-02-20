@@ -33,6 +33,7 @@ func CreateUser(tx *gorm.DB, req *CreateUserRequest) (User, error) {
 		LastName:     req.LastName,
 		Email:        req.Email,
 		PhoneNumber:  req.PhoneNumber,
+		ZipCode:      req.ZipCode,
 		IsJoinBeta:   req.IsJoinBeta,
 	}
 
