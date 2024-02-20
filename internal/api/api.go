@@ -39,6 +39,13 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 
 	test.GET("/email", api.testEmail)
 
+	email := api.handler.Group("email")
+
+	email.POST("/applicant", api.SendApplicantEmail)
+	email.POST("/beta", api.SendBetaRegistrationEmail)
+	email.POST("/contact", api.SendContactUsEmail)
+	email.POST("/qr", api.SendQrCodeEmail)
+
 	payment := api.handler.Group("payments")
 
 	payment.POST("/create-payment-intent", api.CreatePaymentIntent)

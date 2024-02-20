@@ -74,13 +74,13 @@
                         <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; font-weight: bold;">Hi Applicant,</p>
+                              <p style="margin: 2px 32px 0px 32px; font-weight: bold;">Hi {{.ApplicantFirstName}},</p>
                            </td>
                         </tr>
                         <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787">Thank you for your recent application for the [Job Title] position at Elated. 
+                              <p style="margin: 2px 32px 0px 32px; color: #878787">Thank you for your recent application for the {{.ApplicantJobTitle}} position at Elated. 
                                  We appreciate your intereset in joining our team.
                               </p>
                            </td>
@@ -95,7 +95,6 @@
                            </td>
                         </tr>
                         <br>
-                        <br>
                         <tr>
                            <td>
                               <p style="margin: 2px 32px 0px 32px; color: #878787">Here are the details of your application:</p>
@@ -104,21 +103,19 @@
                         <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787">Position: <span>Job Title</span></p>
+                              <p style="margin: 2px 32px 0px 32px; color: #878787">Position: <span>{{.ApplicantJobTitle}}</span></p>
                            </td>
                         </tr>
                         <br>
-                        <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787">Application Date: <span>Date</span></p>
+                              <p style="margin: 2px 32px 0px 32px; color: #878787">Application Date: <span>{{.ApplicationDate}}</span></p>
                            </td>
                         </tr>
                         <br>
-                        <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787">Resume/CV: <span>Attached</span></p>
+                              <p style="margin: 2px 32px 0px 32px; color: #878787">Resume/CV: <span>Attached file</span></p>
                            </td>
                         </tr>
                         <tr>

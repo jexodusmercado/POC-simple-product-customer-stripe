@@ -9,7 +9,7 @@ type QrCodes struct {
 	ID          	uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"ID,omitempty"`
 	TransactionID 	uuid.UUID `gorm:"type:uuid;" json:"transaction_id,omitempty"`
 	UserID 			uuid.UUID `gorm:"type:uuid;" json:"user_id,omitempty"`
-	S3Url         	string    `gorm:"type:longtext;not null;" json:"s3_url,omitempty"`
+	S3Url         	string    `gorm:"type:text;not null;" json:"s3_url,omitempty"`
 }
 
 type CreateQrCodeRequest struct {
