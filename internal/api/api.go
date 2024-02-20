@@ -79,12 +79,6 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	inquiry.POST("", api.CreateInquiry)
 	inquiry.GET("", api.GetInquiries)
 
-	beta := api.handler.Group("beta")
-
-	beta.POST("", api.CreateBetaUser)
-	beta.GET("", api.GetBetaUsers)
-	beta.GET("/:id", api.GetBetaUserById)
-
 	return api
 }
 
