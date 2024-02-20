@@ -2,10 +2,12 @@ package api
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/sendgrid/sendgrid-go"
@@ -21,16 +23,16 @@ type Mail struct {
 }
 
 type Applicant struct {
-	ApplicantJobTitle   string
-	ApplicantFirstName  string
-	ApplicantLastName   string
-	ApplicantEmail      string
-	ApplicantPhone      string
-	ApplicantZipCode    string
-	ApplicantLinkedIn   string
-	ApplicationDate     string
-	ApplicantAttachment string
-	Body                string
+	JobTitle          string
+	FirstName         string
+	LastName          string
+	Email             string
+	Phone             string
+	ZipCode           string
+	LinkedInProfile   string
+	ApplicationDate     *time.Time
+	ApplicantAttachment []byte
+	ApplicantFileName string
 }
 
 type BetaList struct {
@@ -39,6 +41,7 @@ type BetaList struct {
 	Email          string
 	PhoneNumber    string
 	ZipCode        string
+	IsJoinBeta     *time.Time
 }
 
 type ContactUs struct {
@@ -78,8 +81,8 @@ func (api *API) SendMail(req Mail) error {
 
 func (api *API) SendApplicationMail(req Applicant) error {
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
-	to := mail.NewEmail(req.ApplicantFirstName+" "+req.ApplicantLastName, req.ApplicantEmail)
-	subject := "Application Acknowledgement - " + req.ApplicantJobTitle + " Position"
+	to := mail.NewEmail(req.FirstName+" "+req.LastName, req.Email)
+	subject := "Application Acknowledgement - " + req.JobTitle + " Position"
 	fmt.Println("Sending Application email")
 
 	executablePath, err := os.Getwd()
@@ -115,6 +118,16 @@ func (api *API) SendApplicationMail(req Applicant) error {
 
 	// Initialize SendGrid client using the API key
 	sg := sendgrid.NewSendClient(api.config.SENDGRID_API_KEY)
+
+	if len(req.ApplicantAttachment) > 0 {
+        attachment := mail.NewAttachment()
+        attachment.SetContent(base64.StdEncoding.EncodeToString(req.ApplicantAttachment))
+        attachment.SetType("application/pdf") // Set the attachment type (e.g., application/pdf)
+        attachment.SetFilename(req.ApplicantFileName) // Set the filename
+
+        // Add attachment to the message
+        message.AddAttachment(attachment)
+    }
 
 	res, err := sg.Send(message)
 	if err != nil {

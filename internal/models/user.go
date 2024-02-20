@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -12,6 +14,7 @@ type User struct {
 	Email       string    `gorm:"type:varchar(255); unique; not null;" json:"email,omitempty"`
 	ZipCode     string    `gorm:"type:varchar(255); not null;" json:"zip_code,omitempty"`
 	PhoneNumber string    `gorm:"type:varchar(255)" json:"phone_number,omitempty"`
+	IsJoinBeta  *time.Time `gorm:"nullable" json:"is_join_beta,omitempty"`
 }
 
 type CreateUserRequest struct {
@@ -20,15 +23,17 @@ type CreateUserRequest struct {
 	Email       string `json:"email,omitempty" binding:"required"`
 	ZipCode     string `json:"zip_code,omitempty" binding:"required"`
 	PhoneNumber string `json:"phone_number,omitempty"`
+	IsJoinBeta  *time.Time `json:"is_join_beta,omitempty"`
 }
 
 func CreateUser(tx *gorm.DB, req *CreateUserRequest) (User, error) {
 
 	user := User{
-		FirstName: req.FirstName,
-		LastName:  req.LastName,
-		Email:     req.Email,
-		ZipCode:   req.ZipCode,
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		Email:        req.Email,
+		PhoneNumber:  req.PhoneNumber,
+		IsJoinBeta:   req.IsJoinBeta,
 	}
 
 	err := tx.Create(&user).Error

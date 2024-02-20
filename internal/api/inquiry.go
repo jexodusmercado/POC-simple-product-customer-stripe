@@ -15,10 +15,6 @@ func (api *API) CreateInquiry(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-
-
-	
 	
 	err := models.CreateInquiry(api.db, inquiry)
 	if err != nil {
