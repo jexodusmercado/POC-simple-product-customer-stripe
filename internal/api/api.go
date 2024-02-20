@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/conf"
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/middleware"
 
@@ -10,20 +11,22 @@ import (
 )
 
 type API struct {
-	handler *gin.Engine
-	db      *gorm.DB
-	config  *conf.GlobalConfig
+	handler  *gin.Engine
+	db       *gorm.DB
+	config   *conf.GlobalConfig
+	s3Client *s3.Client
 }
 
-func NewAPI(handler *gin.Engine, db *gorm.DB, config *conf.GlobalConfig) *API {
-	return NewAPIWithVersion(handler, db, config)
+func NewAPI(handler *gin.Engine, db *gorm.DB, config *conf.GlobalConfig, s3Client *s3.Client) *API {
+	return NewAPIWithVersion(handler, db, config, s3Client)
 }
 
-func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig) *API {
+func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig, s3Client *s3.Client) *API {
 	api := &API{
-		handler: handler,
-		db:      db,
-		config:  conf,
+		handler:  handler,
+		db:       db,
+		config:   conf,
+		s3Client: s3Client,
 	}
 
 	//cors config
@@ -38,6 +41,7 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	test := api.handler.Group("test")
 
 	test.GET("/email", api.testEmail)
+	test.GET("/qrcode", api.testQRCode)
 
 	email := api.handler.Group("email")
 

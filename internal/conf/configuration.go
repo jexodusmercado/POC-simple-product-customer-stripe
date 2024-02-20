@@ -20,6 +20,7 @@ type GlobalConfig struct {
 	STRIPE_SECRET_KEY   string `mapstructure:"STRIPE_SECRET_KEY"`
 	SENDGRID_API_KEY    string `mapstructure:"SENDGRID_API_KEY"`
 	SENDGRID_EMAIL_FROM string `mapstructure:"SENDGRID_EMAIL_FROM"`
+	BUCKET_NAME         string `mapstructure:"BUCKET_NAME"`
 }
 
 var (
