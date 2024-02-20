@@ -54,4 +54,14 @@ func MigrateDatabase(tx *gorm.DB) {
 		panic("Failed to migrate inquiry")
 	}
 
+	err = tx.AutoMigrate(&models.QrCodes{})
+	if err != nil {
+		panic("Failed to migrate inquiry")
+	}
+
+	err = tx.AutoMigrate(&models.Beta{})
+	if err != nil {
+		panic("Failed to migrate inquiry")
+	}
+
 }
