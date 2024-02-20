@@ -3,7 +3,8 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-
+	"net/http"
+	
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
@@ -63,7 +64,9 @@ func (api *API) Webhook(c *gin.Context) {
 			price = product.DiscountedPrice
 		}
 
-		err = models.CreateTransaction(api.db, &models.CreateTransactionRequest{
+		var transaction models.Transaction
+
+		transaction, err = models.CreateTransaction(api.db, &models.CreateTransactionRequest{
 			ProductID:                       product.ID,
 			UserID:                          user.ID,
 			Amount:                          price,
@@ -75,6 +78,15 @@ func (api *API) Webhook(c *gin.Context) {
 			fmt.Println("Error creating transaction: ", err.Error())
 			return
 		}
+
+		emailErr := api.SendQrCodeMail(api.db, c, user, transaction, product)
+		
+		if emailErr != nil {
+			errorMessage := fmt.Sprintf("Error sending contact us email: %v", err)
+			c.JSON(http.StatusNotFound, gin.H{"error": errorMessage})
+			return
+		}
+		
 	default:
 		fmt.Println("Unhandled event type: ", event.Type)
 		return

@@ -41,14 +41,14 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	test := api.handler.Group("test")
 
 	test.GET("/email", api.testEmail)
-	test.GET("/qrcode", api.testQRCode)
+	//test.GET("/qrcode", api.testQRCode)
 
 	email := api.handler.Group("email")
 
 	email.POST("/applicant", api.SendApplicantEmail)
 	email.POST("/beta", api.SendBetaRegistrationEmail)
 	email.POST("/contact", api.SendContactUsEmail)
-	email.POST("/qr", api.SendQrCodeEmail)
+	//email.POST("/qr", api.SendQrCodeEmail)
 
 	payment := api.handler.Group("payments")
 
@@ -79,11 +79,10 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	inquiry.POST("", api.CreateInquiry)
 	inquiry.GET("", api.GetInquiries)
 
-	beta := api.handler.Group("beta")
+	applicant := api.handler.Group("applicant")
 
-	beta.POST("", api.CreateBetaUser)
-	beta.GET("", api.GetBetaUsers)
-	beta.GET("/:id", api.GetBetaUserById)
+	applicant.POST("", api.CreateApplicant)
+	applicant.GET("", api.GetAllApplicants)
 
 	return api
 }

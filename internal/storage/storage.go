@@ -33,6 +33,8 @@ func Dial(env conf.GlobalConfig) *gorm.DB {
 }
 
 func MigrateDatabase(tx *gorm.DB) {
+	tx.Exec("SET search_path TO elated")
+
 	var err error
 	err = tx.AutoMigrate(&models.Product{})
 	if err != nil {
@@ -59,9 +61,8 @@ func MigrateDatabase(tx *gorm.DB) {
 		panic("Failed to migrate inquiry")
 	}
 
-	err = tx.AutoMigrate(&models.Beta{})
+	err = tx.AutoMigrate(&models.Applicants{})
 	if err != nil {
-		panic("Failed to migrate inquiry")
+		panic("Failed to migrate applicants")
 	}
-
 }

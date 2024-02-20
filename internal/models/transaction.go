@@ -22,7 +22,7 @@ type CreateTransactionRequest struct {
 	StripePaymentIntentClientSecret string `json:"stripe_payment_intent_client_secret,omitempty" binding:"required"`
 }
 
-func CreateTransaction(tx *gorm.DB, req *CreateTransactionRequest) error {
+func CreateTransaction(tx *gorm.DB, req *CreateTransactionRequest) (Transaction, error) {
 	
 	transaction := Transaction{
 		ProductID: req.ProductID,
@@ -32,7 +32,11 @@ func CreateTransaction(tx *gorm.DB, req *CreateTransactionRequest) error {
 		StripePaymentIntentClientSecret: req.StripePaymentIntentClientSecret,
 	}
 
-	return tx.Create(&transaction).Error
+	if err := tx.Create(&transaction).Error; err != nil {
+		return Transaction{}, err
+	}
+
+	return transaction, nil
 
 }
 

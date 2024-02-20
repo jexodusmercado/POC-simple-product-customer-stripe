@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+	
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -10,6 +12,7 @@ type QrCodes struct {
 	TransactionID 	uuid.UUID `gorm:"type:uuid;" json:"transaction_id,omitempty"`
 	UserID 			uuid.UUID `gorm:"type:uuid;" json:"user_id,omitempty"`
 	S3Url         	string    `gorm:"type:text;not null;" json:"s3_url,omitempty"`
+	IsQrUsed        *time.Time `gorm:"nullable" json:"is_qr_used,omitempty"`
 }
 
 type CreateQrCodeRequest struct {

@@ -87,7 +87,7 @@
                         <br>
                         <tr>
                             <td>
-                                <p style="margin: 2px 32px 0px 32px; font-weight: bold;">Hi Blue,</p>
+                                <p style="margin: 2px 32px 0px 32px; font-weight: bold;">Hi {{ .FirstName }},</p>
                             </td>
                         </tr>
                         <br>
@@ -109,7 +109,7 @@
                         <tr>
                             <td style="text-align: center;">
                                 <!-- TO DO: styled QR image -->
-                                <!-- <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{.12332131231}}" alt="QR Code" style="margin-top: 20px;"> -->
+                                <img src="{{ .ObjectUrl }} " alt="QR Code" style="margin-top: 20px; border-radius: 45px;">
                             </td>
                         </tr>
                         <br>

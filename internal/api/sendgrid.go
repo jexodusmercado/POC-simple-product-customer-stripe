@@ -5,11 +5,17 @@ import (
 	"encoding/base64"
 	"fmt"
 	"html/template"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/gin-gonic/gin"
+	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/helper"
+	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"gorm.io/gorm"
@@ -23,13 +29,13 @@ type Mail struct {
 }
 
 type Applicant struct {
-	JobTitle          string
 	FirstName         string
 	LastName          string
 	Email             string
 	Phone             string
 	ZipCode           string
 	LinkedInProfile   string
+	JobTitle          string
 	ApplicationDate     *time.Time
 	ApplicantAttachment []byte
 	ApplicantFileName string
@@ -52,18 +58,6 @@ type ContactUs struct {
 	Message        string
 }
 
-type QrCode struct {
-	TransactionId      uuid.UUID
-	ProductId          uuid.UUID
-	UserId             uuid.UUID
-	UserName           string
-	ProductName        string
-	Description        string
-	Package        	   string
-	PriceWithDiscount  string
-	Date        	   string
-	QrCodeImgTag       string
-}
 
 func (api *API) SendMail(req Mail) error {
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
@@ -112,22 +106,26 @@ func (api *API) SendApplicationMail(req Applicant) error {
 		return err
 	}
 
-	// Code to send email using SendGrid
 	content := mail.NewContent("text/html", bodyContent.String())
 	message := mail.NewV3MailInit(from, subject, to, content)
 
-	// Initialize SendGrid client using the API key
 	sg := sendgrid.NewSendClient(api.config.SENDGRID_API_KEY)
 
 	if len(req.ApplicantAttachment) > 0 {
-        attachment := mail.NewAttachment()
-        attachment.SetContent(base64.StdEncoding.EncodeToString(req.ApplicantAttachment))
-        attachment.SetType("application/pdf") // Set the attachment type (e.g., application/pdf)
-        attachment.SetFilename(req.ApplicantFileName) // Set the filename
-
-        // Add attachment to the message
-        message.AddAttachment(attachment)
-    }
+		attachment := mail.NewAttachment()
+		attachment.SetContent(base64.StdEncoding.EncodeToString(req.ApplicantAttachment))
+		attachment.SetFilename(req.ApplicantFileName)
+	
+		if strings.HasSuffix(req.ApplicantFileName, ".pdf") {
+			attachment.SetType("application/pdf")
+		} else if strings.HasSuffix(req.ApplicantFileName, ".docx") {
+			attachment.SetType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+		} else {
+			fmt.Println("Unsupported file type:", req.ApplicantFileName)
+		}
+	
+		message.AddAttachment(attachment)
+	}
 
 	res, err := sg.Send(message)
 	if err != nil {
@@ -260,12 +258,7 @@ func (api *API) SendContactUsMail(req ContactUs) error {
 	return nil
 }
 
-func (api *API) SendQrCodeMail(db *gorm.DB, req QrCode) error {
-
-	//user, err := models.GetUserByID(db, req.UserId)
-	//if err != nil {
-	//	return err
-	//}
+func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, transaction models.Transaction, product models.Product) error {
 
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
 	to := mail.NewEmail("blue", "blueandraedevera@gmail.com")
@@ -280,10 +273,63 @@ func (api *API) SendQrCodeMail(db *gorm.DB, req QrCode) error {
 	}
 
 	templatesPath := filepath.Join(executablePath, "internal/templates")
-	qrCodeData := QrCode{
-		QrCodeImgTag: `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=12332131231" alt="QR Code" style="margin-top: 20px;">`,
+
+	// Get the current date and time
+	currentTime := time.Now()
+
+	// Convert the current date and time to a string
+	currentDateString := currentTime.Format("2006-01-02 15:04:05")
+
+	qrCodeDetails := helper.QRCodeDetails{
+		UserID: user.ID.String(),
+		ProductID: product.ID.String(),
+		TransactionID: transaction.ID.String(),
+		UserName: user.FirstName + " " + user.LastName,
+		ProductName: product.Name,
+		Description: product.Description,
+		Package: strconv.Itoa(product.Amount),
+		PriceWithDiscount:  strconv.FormatFloat(product.DiscountedPrice, 'f', -1, 64),
+		Date: currentDateString, 
 	}
-	req.QrCodeImgTag = qrCodeData.QrCodeImgTag
+
+	// Load the small image from its URL or any other source
+	smallImageURL := "https://i.ibb.co/kKMwRpR/Group-988759.png"
+	resp, err := http.Get(smallImageURL)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error getting small image",
+		})
+	}
+	defer resp.Body.Close()
+	smallImage, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error generating QR code",
+		})
+	}
+
+	qrCode, generateQrerr := helper.GenerateQRCodeWithImage(qrCodeDetails, smallImage)
+	if generateQrerr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error generating QR code",
+		})
+	}
+
+	key, objectUrl, qrErr := api.UploadQRCode(qrCode, user.ID.String())
+
+	if qrErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error uploading QR code",
+            "error": qrErr,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "QR code uploaded",
+		"key":     key,
+		"objectUrl": objectUrl,
+	})
+
 	// Read HTML content template from file
 	templatePath := filepath.Join(templatesPath, "qrcode.html")
 	tmpl, err := template.ParseFiles(templatePath)
@@ -294,10 +340,18 @@ func (api *API) SendQrCodeMail(db *gorm.DB, req QrCode) error {
 	}
 
 	var bodyContent bytes.Buffer
-	
-	err = tmpl.Execute(&bodyContent, req)
+
+	// Pass the objectUrl value into the template
+	err = tmpl.Execute(&bodyContent, struct {
+		ObjectUrl string
+		FirstName string
+	}{
+		ObjectUrl: objectUrl,
+		FirstName: user.FirstName,
+	})
+	fmt.Println("objectUrl: ", objectUrl)
 	if err != nil {
-		fmt.Println("Execute err")
+		fmt.Println("Execute err", err)
 
 		return err
 	}
