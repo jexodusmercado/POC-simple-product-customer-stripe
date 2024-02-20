@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
@@ -15,15 +16,35 @@ func (api *API) CreateInquiry(ctx *gin.Context) {
 		return
 	}
 
+
+
+	
+	
 	err := models.CreateInquiry(api.db, inquiry)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	inquiryReq := ContactUs{
+		FirstName:    inquiry.FirstName,
+		LastName:     inquiry.LastName,
+		Email:        inquiry.Email,
+		PhoneNumber:  inquiry.Phone,
+		Message:      inquiry.Message,
+	}
+
+	emailErr := api.SendContactUsMail(inquiryReq)
+	
+	if emailErr != nil {
+		errorMessage := fmt.Sprintf("Error sending contact us email: %v", err)
+		ctx.JSON(http.StatusNotFound, gin.H{"error": errorMessage})
+		return
+	}
+
 	// insert send email here to James@elated.io for prod / use your own email for dev
 
-	ctx.JSON(http.StatusOK, nil)
+	ctx.JSON(http.StatusOK, gin.H{"message": "Inquiry created successfully"})
 }
 
 func (api *API) GetInquiries(ctx *gin.Context) {
