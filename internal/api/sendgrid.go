@@ -323,13 +323,26 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 		})
 	}
 
+	qrStorageReq := models.CreateQrCodeRequest{
+		TransactionID: transaction.ID,
+		UserID:        user.ID,
+		S3Url:         objectUrl,
+	}
+
+	if _, err := models.CreateQrCode(api.db, &qrStorageReq); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error creating QR code entry",
+			"error":   err,
+		})
+		return err
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message":   "QR code uploaded",
 		"key":       key,
 		"objectUrl": objectUrl,
 	})
 
-	// Read HTML content template from file
 	templatePath := filepath.Join(templatesPath, "qrcode.html")
 	tmpl, err := template.ParseFiles(templatePath)
 	if err != nil {

@@ -60,6 +60,16 @@ func GetTransactionByID(tx *gorm.DB, id string) (Transaction, error) {
 
 }
 
+func GetTransactionByStripePaymentIntentID(tx *gorm.DB, id string) (Transaction, error) {
+	
+	var transaction Transaction
+
+	err := tx.Where("stripe_payment_intent_id = ?", id).First(&transaction).Error
+
+	return transaction, err
+
+}
+
 func UpdateTransaction(tx *gorm.DB, id string, req *CreateTransactionRequest) error {
 	
 	transaction := Transaction{
