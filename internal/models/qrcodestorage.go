@@ -44,10 +44,10 @@ func GetQrCodes(tx *gorm.DB) ([]QrCodes, error) {
 
 }
 
-func GetQrCodeByUserIdAndTransactionId(tx *gorm.DB, userID, transactionID uuid.UUID) (QrCodes, error) {
+func GetQrCodeByUserIDAndTransactionID(tx *gorm.DB, transactionID uuid.UUID, userID uuid.UUID) (QrCodes, error) {
 
 	var qrcode QrCodes
-    err := tx.Where("user_id = ? AND transaction_id = ?", userID, transactionID).First(&qrcode).Error
+    err := tx.Where("transaction_id = ? AND user_id = ?", transactionID, userID).First(&qrcode).Error
     return qrcode, err
 
 }
