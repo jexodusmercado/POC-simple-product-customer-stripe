@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
@@ -58,6 +59,15 @@ func (api *API) Webhook(c *gin.Context) {
 			}
 		}
 
+		timeNow := time.Now()
+
+		if paymentIntent.Metadata["is_joining"] == "true" {
+			models.UpdateUser(api.db, user.ID, &models.CreateUserRequest{
+				IsJoinBeta: &timeNow,
+			})
+
+		}
+
 		price := product.BasePrice
 
 		if product.DiscountedPrice > 0 {
@@ -80,13 +90,13 @@ func (api *API) Webhook(c *gin.Context) {
 		}
 
 		emailErr := api.SendQrCodeMail(api.db, c, user, transaction, product)
-		
+
 		if emailErr != nil {
 			errorMessage := fmt.Sprintf("Error sending contact us email: %v", err)
 			c.JSON(http.StatusNotFound, gin.H{"error": errorMessage})
 			return
 		}
-		
+
 	default:
 		fmt.Println("Unhandled event type: ", event.Type)
 		return

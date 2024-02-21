@@ -62,6 +62,7 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	user.POST("", api.CreateUser)
 	user.GET("", api.GetUsers)
 	user.GET("/:id", api.GetUser)
+	user.GET("/exist/:email", api.CheckUserExists)
 
 	product := api.handler.Group("products")
 
@@ -78,8 +79,6 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 
 	inquiry.POST("", api.CreateInquiry)
 	inquiry.GET("", api.GetInquiries)
-
-
 
 	return api
 }

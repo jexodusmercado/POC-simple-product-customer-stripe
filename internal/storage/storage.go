@@ -33,7 +33,6 @@ func Dial(env conf.GlobalConfig) *gorm.DB {
 }
 
 func MigrateDatabase(tx *gorm.DB) {
-	tx.Exec("SET search_path TO elated")
 
 	var err error
 	err = tx.AutoMigrate(&models.Product{})
