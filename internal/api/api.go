@@ -79,7 +79,10 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	inquiry.POST("", api.CreateInquiry)
 	inquiry.GET("", api.GetInquiries)
 
+	applicant := api.handler.Group("applicant")
 
+	applicant.POST("", api.CreateApplicant)
+	applicant.GET("", api.GetAllApplicants)
 
 	return api
 }
