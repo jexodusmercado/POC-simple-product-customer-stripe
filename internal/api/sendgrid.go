@@ -29,35 +29,34 @@ type Mail struct {
 }
 
 type Applicant struct {
-	FirstName         string
-	LastName          string
-	Email             string
-	Phone             string
-	ZipCode           string
-	LinkedInProfile   string
-	JobTitle          string
+	FirstName           string
+	LastName            string
+	Email               string
+	Phone               string
+	ZipCode             string
+	LinkedInProfile     string
+	JobTitle            string
 	ApplicationDate     *time.Time
 	ApplicantAttachment []byte
-	ApplicantFileName string
+	ApplicantFileName   string
 }
 
 type BetaList struct {
-	FirstName      string
-	LastName       string
-	Email          string
-	PhoneNumber    string
-	ZipCode        string
-	IsJoinBeta     *time.Time
+	FirstName   string
+	LastName    string
+	Email       string
+	PhoneNumber string
+	ZipCode     string
+	IsJoinBeta  *time.Time
 }
 
 type ContactUs struct {
-	FirstName      string
-	LastName       string
-	Email          string
-	PhoneNumber    string
-	Message        string
+	FirstName   string
+	LastName    string
+	Email       string
+	PhoneNumber string
+	Message     string
 }
-
 
 func (api *API) SendMail(req Mail) error {
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
@@ -115,7 +114,7 @@ func (api *API) SendApplicationMail(req Applicant) error {
 		attachment := mail.NewAttachment()
 		attachment.SetContent(base64.StdEncoding.EncodeToString(req.ApplicantAttachment))
 		attachment.SetFilename(req.ApplicantFileName)
-	
+
 		if strings.HasSuffix(req.ApplicantFileName, ".pdf") {
 			attachment.SetType("application/pdf")
 		} else if strings.HasSuffix(req.ApplicantFileName, ".docx") {
@@ -123,7 +122,7 @@ func (api *API) SendApplicationMail(req Applicant) error {
 		} else {
 			fmt.Println("Unsupported file type:", req.ApplicantFileName)
 		}
-	
+
 		message.AddAttachment(attachment)
 	}
 
@@ -261,7 +260,7 @@ func (api *API) SendContactUsMail(req ContactUs) error {
 func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, transaction models.Transaction, product models.Product) error {
 
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
-	to := mail.NewEmail("blue", "blueandraedevera@gmail.com")
+	to := mail.NewEmail(user.FirstName + " " + user.LastName, user.Email)
 	subject := "SparksFlirt Purchase Confirmation"
 	fmt.Println("Sending SparksFlirt Purchase Confirmation email")
 
@@ -281,15 +280,15 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 	currentDateString := currentTime.Format("2006-01-02 15:04:05")
 
 	qrCodeDetails := helper.QRCodeDetails{
-		UserID: user.ID.String(),
-		ProductID: product.ID.String(),
-		TransactionID: transaction.ID.String(),
-		UserName: user.FirstName + " " + user.LastName,
-		ProductName: product.Name,
-		Description: product.Description,
-		Package: strconv.Itoa(product.Amount),
-		PriceWithDiscount:  strconv.FormatFloat(product.DiscountedPrice, 'f', -1, 64),
-		Date: currentDateString, 
+		UserID:            user.ID.String(),
+		ProductID:         product.ID.String(),
+		TransactionID:     transaction.ID.String(),
+		UserName:          user.FirstName + " " + user.LastName,
+		ProductName:       product.Name,
+		Description:       product.Description,
+		Package:           strconv.Itoa(product.Amount),
+		PriceWithDiscount: strconv.FormatFloat(product.DiscountedPrice, 'f', -1, 64),
+		Date:              currentDateString,
 	}
 
 	// Load the small image from its URL or any other source
@@ -308,7 +307,7 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 		})
 	}
 
-	qrCode, generateQrerr := helper.GenerateQRCodeWithImage(qrCodeDetails, smallImage)
+	qrCode, generateQrerr := helper.GenerateQRCodeWithEncryptedData(qrCodeDetails, []byte(api.config.KEY_ELATED), []byte(api.config.IV_ELATED), smallImage)
 	if generateQrerr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error generating QR code",
@@ -320,13 +319,13 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 	if qrErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Error uploading QR code",
-            "error": qrErr,
+			"error":   qrErr,
 		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "QR code uploaded",
-		"key":     key,
+		"message":   "QR code uploaded",
+		"key":       key,
 		"objectUrl": objectUrl,
 	})
 
@@ -359,7 +358,7 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 	// Code to send email using SendGrid
 	content := mail.NewContent("text/html", bodyContent.String())
 	message := mail.NewV3MailInit(from, subject, to, content)
-	
+
 	// Initialize SendGrid client using the API key
 	sg := sendgrid.NewSendClient(api.config.SENDGRID_API_KEY)
 

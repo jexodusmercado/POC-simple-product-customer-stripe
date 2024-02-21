@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -92,8 +91,7 @@ func (api *API) Webhook(c *gin.Context) {
 		emailErr := api.SendQrCodeMail(api.db, c, user, transaction, product)
 
 		if emailErr != nil {
-			errorMessage := fmt.Sprintf("Error sending contact us email: %v", err)
-			c.JSON(http.StatusNotFound, gin.H{"error": errorMessage})
+			fmt.Println("Error sending QR Code: ", err.Error())
 			return
 		}
 

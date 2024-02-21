@@ -1,40 +1,34 @@
 package helper
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
-    "image/png"
-    "strconv"
-    "strings"
-	"bytes"
-	
+	"image/png"
+	"strconv"
+	"strings"
+
 	"github.com/skip2/go-qrcode"
 )
 
 type QRCodeDetails struct {
-	UserID string
-	ProductID string
-	TransactionID string
-	UserName string
-    ProductName string
-    Description string
-    Package string
-    PriceWithDiscount string
-    Date string
+	UserID            string
+	ProductID         string
+	TransactionID     string
+	UserName          string
+	ProductName       string
+	Description       string
+	Package           string
+	PriceWithDiscount string
+	Date              string
 }
 
-func GenerateQRCode(qrCodeDetails QRCodeDetails) ([]byte, error) {
-	json, err := json.Marshal(qrCodeDetails)
-	if err != nil {
-		fmt.Println("Error in GenerateQRCode: ", err)
-		return nil, err
-	}
-
+func GenerateQRCode(encryptedData string) ([]byte, error) {
 	// generate QR code
-	qr, err := qrcode.New(string(json), qrcode.Medium)
+	qr, err := qrcode.New(string(encryptedData), qrcode.Medium)
 	if err != nil {
 		fmt.Println("Error in GenerateQRCode: ", err)
 		return nil, err
@@ -50,7 +44,7 @@ func GenerateQRCode(qrCodeDetails QRCodeDetails) ([]byte, error) {
 	qr.ForegroundColor = foregroundColor
 
 	// Encode QR code to PNG byte slice
-	png, err := qr.PNG(180) // Size of 256x256 pixels
+	png, err := qr.PNG(200) // Size of 256x256 pixels
 	if err != nil {
 		fmt.Println("Error in GenerateQRCode: ", err)
 		return nil, err
@@ -118,8 +112,26 @@ func addImageToQRCode(qrCodeImage []byte, smallImage []byte) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func GenerateQRCodeWithImage(qrCodeDetails QRCodeDetails, smallImage []byte) ([]byte, error) {
-	qrCodeImage, err := GenerateQRCode(qrCodeDetails)
+func GenerateQRCodeWithEncryptedData(qrCodeDetails QRCodeDetails, key, iv []byte, smallImage []byte) ([]byte, error) {
+	// Encrypt QR code details
+	jsonBytes, err := json.Marshal(qrCodeDetails)
+	if err != nil {
+		return nil, err
+	}
+
+	encryptedData, err := Encrypt(jsonBytes, key, iv)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("encryptedData: ", encryptedData)
+
+	descryptedData, err := Decrypt(encryptedData, key, iv)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("descryptedData: ", descryptedData)
+
+	qrCodeImage, err := GenerateQRCode(encryptedData)
 	if err != nil {
 		return nil, err
 	}
