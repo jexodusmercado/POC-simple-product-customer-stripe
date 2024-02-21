@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-func (api *API) UploadQRCode(qrCode []byte, userId string) (key, objectURL string, err error) {
+func (api *API) UploadQRCode(qrCode []byte, userId string) (string, string, error) {
 	tmpQrCode, err := os.CreateTemp("", "qr-*.png")
 	if err != nil {
 		return "", "", err
@@ -24,7 +25,7 @@ func (api *API) UploadQRCode(qrCode []byte, userId string) (key, objectURL strin
 	}
 
 	tmpQrCode.Seek(0, 0)
-	key = filepath.Base(tmpQrCode.Name())
+    key := "qr-codes/" + userId + "/" + filepath.Base(tmpQrCode.Name())
 
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
@@ -35,7 +36,7 @@ func (api *API) UploadQRCode(qrCode []byte, userId string) (key, objectURL strin
 
 	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(api.config.BUCKET_NAME),
-		Key:    aws.String("qr-codes/" + userId + "/" + key),
+		Key:    aws.String(key),
 		Body:   tmpQrCode,
 	})
 	if err != nil {
@@ -43,9 +44,41 @@ func (api *API) UploadQRCode(qrCode []byte, userId string) (key, objectURL strin
 	}
 
 	// Get the object URL
-	objectURL = api.GetObjectURL(api.config.BUCKET_NAME, "qr-codes/"+userId+"/"+key)
+    objectURL := api.GetObjectURL(api.config.BUCKET_NAME, key)
 
 	return key, objectURL, nil
+}
+
+func (api *API) UploadAttachment(file *multipart.FileHeader) (string, error) {
+	key := "attachments/" + file.Filename
+
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		return "", err
+	}
+
+	s3Client := s3.NewFromConfig(cfg)
+
+	f, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String(api.config.BUCKET_NAME),
+		Key:    aws.String(key),
+		Body:   f,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	// Get the object URL
+	objectURL := api.GetObjectURL(api.config.BUCKET_NAME, key)
+
+	return objectURL, nil
 }
 
 // GetObjectURL retrieves the URL of the object stored in S3.

@@ -17,19 +17,19 @@ type Applicants struct {
 	LinkedInProfile string     `gorm:"type:varchar(255); nullable;" json:"linked_in_profile"`
 	JobTitle        string     `gorm:"type:varchar(255); not null;" json:"job_title"`
 	ApplicationDate *time.Time `gorm:"nullable" json:"application_date,omitempty"`
+	FileURL         string     `gorm:"type:varchar(255); nullable;" json:"file_url,omitempty"`
 }
 
 type ApplicantRequest struct {
-	FirstName           string     `json:"first_name,omitempty" binding:"required"`
-	LastName            string     `json:"last_name,omitempty" binding:"required"`
-	Email               string     `json:"email,omitempty" binding:"required"`
-	Phone               string     `json:"phone,omitempty" binding:"required"`
-	ZipCode             string     `json:"zip_code,omitempty" binding:"required"`
-	JobTitle            string     `json:"job_title,omitempty" binding:"required"`
-	LinkedInProfile     string     `json:"linked_in_profile,omitempty"`
-	ApplicationDate     *time.Time `json:"application_date,omitempty"`
-	ApplicantAttachment []byte     `json:"applicant_attachment,omitempty" binding:"required"`
-	ApplicantFileName   string     `json:"applicant_filename,omitempty" binding:"required"`
+	FirstName       string     `form:"first_name,omitempty" binding:"required"`
+	LastName        string     `form:"last_name,omitempty" binding:"required"`
+	Email           string     `form:"email,omitempty" binding:"required"`
+	Phone           string     `form:"phone,omitempty" binding:"required"`
+	ZipCode         string     `form:"zip_code,omitempty" binding:"required"`
+	JobTitle        string     `form:"job_title,omitempty" binding:"required"`
+	LinkedInProfile string     `form:"linked_in_profile,omitempty"`
+	ApplicationDate *time.Time `form:"application_date,omitempty"`
+	FileURL         string
 }
 
 func GetAllApplicants(tx *gorm.DB) ([]Applicants, error) {
@@ -50,6 +50,7 @@ func CreateApplicant(tx *gorm.DB, req ApplicantRequest) error {
 		LinkedInProfile: req.LinkedInProfile,
 		JobTitle:        req.JobTitle,
 		ApplicationDate: req.ApplicationDate,
+        FileURL:         req.FileURL,
 	}
 
 	if err := tx.Create(applicant).Error; err != nil {

@@ -19,7 +19,7 @@ func (api *API) CreateUser(c *gin.Context) {
 		return
 	}
 
-	_, err := models.CreateUser(api.db, &req)
+	user, err := models.CreateUser(api.db, &req)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
@@ -47,7 +47,7 @@ func (api *API) CreateUser(c *gin.Context) {
 		}
 	}
 
-	c.JSON(200, gin.H{})
+	c.JSON(http.StatusOK, user)
 }
 
 func (api *API) GetUsers(c *gin.Context) {
