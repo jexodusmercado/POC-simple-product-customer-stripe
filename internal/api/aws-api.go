@@ -25,16 +25,9 @@ func (api *API) UploadQRCode(qrCode []byte, userId string) (string, string, erro
 	}
 
 	tmpQrCode.Seek(0, 0)
-    key := "qr-codes/" + userId + "/" + filepath.Base(tmpQrCode.Name())
+	key := "qr-codes/" + userId + "/" + filepath.Base(tmpQrCode.Name())
 
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return "", "", err
-	}
-
-	s3Client := s3.NewFromConfig(cfg)
-
-	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+	_, err = api.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(api.config.BUCKET_NAME),
 		Key:    aws.String(key),
 		Body:   tmpQrCode,
@@ -44,7 +37,7 @@ func (api *API) UploadQRCode(qrCode []byte, userId string) (string, string, erro
 	}
 
 	// Get the object URL
-    objectURL := api.GetObjectURL(api.config.BUCKET_NAME, key)
+	objectURL := api.GetObjectURL(api.config.BUCKET_NAME, key)
 
 	return key, objectURL, nil
 }
