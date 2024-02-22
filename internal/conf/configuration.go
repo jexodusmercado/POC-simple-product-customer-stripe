@@ -29,6 +29,7 @@ type GlobalConfig struct {
 	IV_ELATED             string   `mapstructure:"IV_ELATED"`
 	STRIPE_WEBHOOK_SECRET string   `mapstructure:"STRIPE_WEBHOOK_SECRET"`
 	ALLOWED_ORIGINS       []string `mapstructure:"ALLOWED_ORIGINS"`
+	TEMPLATE_PATH         string   `mapstructure:"TEMPLATE_PATH"`
 }
 
 var (

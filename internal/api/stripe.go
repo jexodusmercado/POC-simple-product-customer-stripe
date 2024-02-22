@@ -21,6 +21,13 @@ func (api *API) Webhook(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("payload")
+	fmt.Println(string(payload))
+	fmt.Println("SECRET")
+	fmt.Println(api.config.STRIPE_WEBHOOK_SECRET)
+	fmt.Println("HEADER")
+	fmt.Println(c.GetHeader("Stripe-Signature"))
+
 	event, err := webhook.ConstructEvent(payload, c.GetHeader("Stripe-Signature"), api.config.STRIPE_WEBHOOK_SECRET)
 	if err != nil {
 		fmt.Println("Error verifying webhook signature: ", err.Error())

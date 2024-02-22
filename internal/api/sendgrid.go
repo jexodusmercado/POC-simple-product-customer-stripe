@@ -259,6 +259,12 @@ func (api *API) SendContactUsMail(req ContactUs) error {
 
 func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, transaction models.Transaction, product models.Product) error {
 
+	path := "internal/templates"
+
+	if api.config.TEMPLATE_PATH != "" {
+		path = api.config.TEMPLATE_PATH
+	}
+
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
 	to := mail.NewEmail(user.FirstName+" "+user.LastName, user.Email)
 	subject := "SparksFlirt Purchase Confirmation"
@@ -270,7 +276,10 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 		return err
 	}
 
-	templatesPath := filepath.Join(executablePath, "internal/templates")
+	templatesPath := filepath.Join(executablePath, path)
+
+	fmt.Println("templatesPath: ", templatesPath)
+
 	currentTime := time.Now()
 	currentDateString := currentTime.Format("2006-01-02 15:04:05")
 
