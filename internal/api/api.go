@@ -38,6 +38,12 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	api.handler.Use(cors.New(corsConfig))
 	api.handler.Use(middleware.AddRequestID(api.config))
 
+	api.handler.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status": "ok",
+		})
+	})
+
 	test := api.handler.Group("test")
 
 	test.GET("/email", api.testEmail)
