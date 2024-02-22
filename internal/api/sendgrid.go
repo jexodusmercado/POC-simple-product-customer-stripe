@@ -143,6 +143,77 @@ func (api *API) SendApplicationMail(req Applicant) error {
 	return nil
 }
 
+func (api *API) SendApplicationElatedMail(req Applicant) error {
+	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
+	to := mail.NewEmail(req.FirstName+" "+req.LastName, "blueandraedevera@gmail.com")
+	subject := "Application Submission - " + req.FirstName+" "+req.LastName + " for " + req.JobTitle + " Position"
+	fmt.Println("Sending Application Elated email")
+
+	executablePath, err := os.Getwd()
+	if err != nil {
+		fmt.Println("err. (1)")
+
+		return err
+	}
+
+	templatesPath := filepath.Join(executablePath, "internal/templates")
+
+	// Read HTML content template from file
+	templatePath := filepath.Join(templatesPath, "applicant-elated-copy.html")
+	tmpl, err := template.ParseFiles(templatePath)
+	if err != nil {
+		fmt.Println("err. (3)", err)
+
+		return err
+	}
+
+	var bodyContent bytes.Buffer
+
+	err = tmpl.Execute(&bodyContent, req)
+	if err != nil {
+		fmt.Println("Execute err")
+
+		return err
+	}
+
+	content := mail.NewContent("text/html", bodyContent.String())
+	message := mail.NewV3MailInit(from, subject, to, content)
+
+	sg := sendgrid.NewSendClient(api.config.SENDGRID_API_KEY)
+
+	if len(req.ApplicantAttachment) > 0 {
+		attachment := mail.NewAttachment()
+		attachment.SetContent(base64.StdEncoding.EncodeToString(req.ApplicantAttachment))
+		attachment.SetFilename(req.ApplicantFileName)
+
+		if strings.HasSuffix(req.ApplicantFileName, ".pdf") {
+			attachment.SetType("application/pdf")
+		} else if strings.HasSuffix(req.ApplicantFileName, ".docx") {
+			attachment.SetType("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+		} else {
+			fmt.Println("Unsupported file type:", req.ApplicantFileName)
+		}
+
+		message.AddAttachment(attachment)
+	}
+
+	res, err := sg.Send(message)
+	if err != nil {
+		fmt.Println("err. (5)")
+
+		return err
+	}
+
+	if res.StatusCode != 200 && res.StatusCode != 202 {
+		fmt.Println("err. (6)")
+
+		return err
+	}
+	fmt.Println("Sending Customer Email Success.")
+
+	return nil
+}
+
 func (api *API) SendBetaMail(req BetaList) error {
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
 	to := mail.NewEmail(req.FirstName+" "+req.LastName, req.Email)

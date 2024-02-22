@@ -74,32 +74,18 @@
                         <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; font-weight: bold;">Hi {{.FirstName}},</p>
+                              <p style="margin: 2px 32px 0px 32px; font-weight: bold;">Hi,</p>
                            </td>
                         </tr>
                         <br>
                         <tr>
                            <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787">Thank you for your recent application for the {{ .JobTitle }} position at Elated. 
-                                 We appreciate your interest in joining our team.
+                              <p style="margin: 2px 32px 0px 32px; color: #878787">Someone had an interest with one of our job posting opening at Elated. Details and attached file below. 
                               </p>
                            </td>
                         </tr>
                         <br>
-                        <tr>
-                           <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787; font-weight: semibold;">We want to assure you that your application has been received and is currently 
-                                 under review by our hiring team. We carefully consider each application and strive to make the best match between cadidate skills 
-                                 and our job requirements.
-                              </p>
-                           </td>
-                        </tr>
-                        <br>
-                        <tr>
-                           <td>
-                              <p style="margin: 2px 32px 0px 32px; color: #878787">Here are the details of your application:</p>
-                           </td>
-                        </tr>
+                    
                         <br>
                         <tr>
                            <td>
@@ -109,25 +95,48 @@
                         <br>
                         <tr>
                            <td>
+                              <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Name:</span> <span style="color: #878787;">{{ .FirstName }}</span> <span style="color: #878787;">{{ .LastName }}</span></p>
+                           </td>
+                        </tr>
+                        <br>
+                        <tr>
+                           <td>
+                              <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Email:</span> <span style="color: #878787;">{{ .Email }}</span></p>
+                           </td>
+                        </tr>
+                        <br>
+                        <tr>
+                           <td>
+                              <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Phone Number: </span> <span style="color: #878787;">{{ .Phone }}</span></p>
+                           </td>
+                        </tr>
+                        <br>
+                        <tr>
+                           <td>
+                              <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Zip Code: </span> <span style="color: #878787;">{{ .ZipCode }}</span></p>
+                           </td>
+                        </tr>
+                        <br>
+                        <tr>
+                           <td>
+                              <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Linked In Profile: </span> <span style="color: #878787;"><a href="{{ .LinkedInProfile }}">{{ .LinkedInProfile }}</a></span></p>
+                           </td>
+                        </tr>
+                        <br>
+                        <tr>
+                           <td>
                               <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Application Date: </span> <span style="color: #878787;">{{ .ApplicationDate }}</span></p>
                            </td>
                         </tr>
                         <br>
-                        <tr>
-                           <td>
-                              <p style="margin: 2px 32px 0px 32px;"><span style="color: #A554C4;">Resume/CV: </span> <span style="color: #878787;">Attached file</span></p>
-                           </td>
-                        </tr>
                         <br>
                         <tr>
                            <td>
                               <p style="margin: 2px 32px 0px 32px; color: #878787">
-                                 Thank you again for considering a career with Elated. 
-                                 We appreciate the time and effort you put into your application.
+                                 Thank you and have a good day.
                               </p>
                            </td>
                         </tr>
-                        <br>
                         <tr>
                            <td>
                               <p style="margin: 2px 32px 0px 32px; color: #878787">Sincerely,</p>

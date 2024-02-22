@@ -62,7 +62,15 @@ func (api *API) CreateApplicant(ctx *gin.Context) {
 	emailErr := api.SendApplicationMail(applicantReq)
 
 	if emailErr != nil {
-		errorMessage := fmt.Sprintf("Error sending contact us email: %v", err)
+		errorMessage := fmt.Sprintf("Error sending application us email: %v", err)
+		ctx.JSON(http.StatusNotFound, gin.H{"error": errorMessage})
+		return
+	}
+
+	emailElatedErr := api.SendApplicationElatedMail(applicantReq)
+
+	if emailElatedErr != nil {
+		errorMessage := fmt.Sprintf("Error sending elated application us email: %v", err)
 		ctx.JSON(http.StatusNotFound, gin.H{"error": errorMessage})
 		return
 	}
