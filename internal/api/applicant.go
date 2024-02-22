@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,15 @@ func (api *API) CreateApplicant(ctx *gin.Context) {
 		return
 	}
 
+	fileContent, err := file.Open()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer fileContent.Close()
+
+	fileBytes, err := io.ReadAll(fileContent)
+
 	applicantReq := Applicant{
 		FirstName:         applicant.FirstName,
 		LastName:          applicant.LastName,
@@ -45,7 +55,8 @@ func (api *API) CreateApplicant(ctx *gin.Context) {
 		LinkedInProfile:   applicant.LinkedInProfile,
 		JobTitle:          applicant.JobTitle,
 		ApplicationDate:   applicant.ApplicationDate,
-		ApplicantFileName: applicant.FileURL,
+		ApplicantFileName: file.Filename,
+		ApplicantAttachment: fileBytes,
 	}
 
 	emailErr := api.SendApplicationMail(applicantReq)
