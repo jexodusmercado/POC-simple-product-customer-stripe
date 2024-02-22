@@ -281,7 +281,7 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 		UserName:          user.FirstName + " " + user.LastName,
 		ProductName:       product.Name,
 		Description:       product.Description,
-		Package:           strconv.Itoa(product.Amount),
+		Package:           strconv.FormatFloat(product.BasePrice, 'f', -1, 64),
 		PriceWithDiscount: strconv.FormatFloat(product.DiscountedPrice, 'f', -1, 64),
 		Date:              currentDateString,
 	}

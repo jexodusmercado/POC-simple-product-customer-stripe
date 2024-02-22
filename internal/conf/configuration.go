@@ -11,23 +11,24 @@ import (
 )
 
 type GlobalConfig struct {
-	APPLICATION_NAME      string `mapstructure:"APPLICATION_NAME"`
-	APPLICATION_ENV       string `mapstructure:"APPLICATION_ENV"`
-	VERSION               string `mapstructure:"VERSION"`
-	DB_HOST               string `mapstructure:"DB_HOST"`
-	DB_USER               string `mapstructure:"DB_USER"`
-	DB_PASSWORD           string `mapstructure:"DB_PASSWORD"`
-	DB_NAME               string `mapstructure:"DB_NAME"`
-	DB_PORT               string `mapstructure:"DB_PORT"`
-	JWT_SECRET            string `mapstructure:"JWT_SECRET"`
-	RequestIDHeader       string `mapstructure:"REQUEST_ID_HEADER"`
-	STRIPE_SECRET_KEY     string `mapstructure:"STRIPE_SECRET_KEY"`
-	SENDGRID_API_KEY      string `mapstructure:"SENDGRID_API_KEY"`
-	SENDGRID_EMAIL_FROM   string `mapstructure:"SENDGRID_EMAIL_FROM"`
-	BUCKET_NAME           string `mapstructure:"BUCKET_NAME"`
-	KEY_ELATED            string `mapstructure:"KEY_ELATED"`
-	IV_ELATED             string `mapstructure:"IV_ELATED"`
-	STRIPE_WEBHOOK_SECRET string `mapstructure:"STRIPE_WEBHOOK_SECRET"`
+	APPLICATION_NAME      string   `mapstructure:"APPLICATION_NAME"`
+	APPLICATION_ENV       string   `mapstructure:"APPLICATION_ENV"`
+	VERSION               string   `mapstructure:"VERSION"`
+	DB_HOST               string   `mapstructure:"DB_HOST"`
+	DB_USER               string   `mapstructure:"DB_USER"`
+	DB_PASSWORD           string   `mapstructure:"DB_PASSWORD"`
+	DB_NAME               string   `mapstructure:"DB_NAME"`
+	DB_PORT               string   `mapstructure:"DB_PORT"`
+	JWT_SECRET            string   `mapstructure:"JWT_SECRET"`
+	RequestIDHeader       string   `mapstructure:"REQUEST_ID_HEADER"`
+	STRIPE_SECRET_KEY     string   `mapstructure:"STRIPE_SECRET_KEY"`
+	SENDGRID_API_KEY      string   `mapstructure:"SENDGRID_API_KEY"`
+	SENDGRID_EMAIL_FROM   string   `mapstructure:"SENDGRID_EMAIL_FROM"`
+	BUCKET_NAME           string   `mapstructure:"BUCKET_NAME"`
+	KEY_ELATED            string   `mapstructure:"KEY_ELATED"`
+	IV_ELATED             string   `mapstructure:"IV_ELATED"`
+	STRIPE_WEBHOOK_SECRET string   `mapstructure:"STRIPE_WEBHOOK_SECRET"`
+	ALLOWED_ORIGINS       []string `mapstructure:"ALLOWED_ORIGINS"`
 }
 
 var (
@@ -61,6 +62,7 @@ func InitEnv() GlobalConfig {
 	viper.SetDefault("APPLICATION_ENV", "development")
 	viper.SetDefault("VERSION", "1.0.0")
 	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("ALLOWED_ORIGINS", []string{"http://localhost"}) // Set a default value
 
 	// Unmarshal environment configurations into your struct
 	if err := viper.Unmarshal(&c); err != nil {

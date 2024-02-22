@@ -31,7 +31,7 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 
 	//cors config
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowOrigins = api.config.ALLOWED_ORIGINS
 	corsConfig.AddAllowHeaders("Content-Type", "Authorization") // Add Authorization header
 	corsConfig.AddAllowMethods("GET", "POST", "PATCH")
 

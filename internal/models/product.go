@@ -12,7 +12,6 @@ type Product struct {
 	BasePrice       float64   `gorm:"type:float" json:"basePrice,omitempty"`
 	DiscountedPrice float64   `gorm:"type:float" json:"discountedPrice,omitempty"`
 	Quantity        int       `gorm:"type:int" json:"quantity,omitempty"`
-	Amount          int       `gorm:"type:int" json:"amount,omitempty"`
 }
 
 type CreateProductRequest struct {
@@ -21,7 +20,6 @@ type CreateProductRequest struct {
 	BasePrice       float64 `json:"basePrice,omitempty" binding:"required"`
 	DiscountedPrice float64 `json:"discountedPrice,omitempty"`
 	Quantity        int     `json:"quantity,omitempty" binding:"required"`
-	Amount          int     `json:"amount,omitempty" binding:"required"`
 }
 
 func CreateProduct(tx *gorm.DB, req *CreateProductRequest) error {
@@ -32,7 +30,6 @@ func CreateProduct(tx *gorm.DB, req *CreateProductRequest) error {
 		BasePrice:       req.BasePrice,
 		DiscountedPrice: req.DiscountedPrice,
 		Quantity:        req.Quantity,
-		Amount:          req.Amount,
 	}
 
 	return tx.Create(&product).Error
@@ -68,7 +65,6 @@ func UpdateProduct(tx *gorm.DB, id uuid.UUID, req *CreateProductRequest) error {
 		BasePrice:       req.BasePrice,
 		DiscountedPrice: req.DiscountedPrice,
 		Quantity:        req.Quantity,
-		Amount:          req.Amount,
 	}
 
 	return tx.Model(&product).Where("id = ?", id).Updates(product).Error
