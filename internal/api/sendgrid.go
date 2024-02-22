@@ -260,9 +260,8 @@ func (api *API) SendContactUsMail(req ContactUs) error {
 func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, transaction models.Transaction, product models.Product) error {
 
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
-	to := mail.NewEmail(user.FirstName + " " + user.LastName, user.Email)
+	to := mail.NewEmail(user.FirstName+" "+user.LastName, user.Email)
 	subject := "SparksFlirt Purchase Confirmation"
-	fmt.Println("Sending SparksFlirt Purchase Confirmation email")
 
 	executablePath, err := os.Getwd()
 	if err != nil {
@@ -272,11 +271,7 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 	}
 
 	templatesPath := filepath.Join(executablePath, "internal/templates")
-
-	// Get the current date and time
 	currentTime := time.Now()
-
-	// Convert the current date and time to a string
 	currentDateString := currentTime.Format("2006-01-02 15:04:05")
 
 	qrCodeDetails := helper.QRCodeDetails{
@@ -310,7 +305,7 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 	qrCode, generateQrerr := helper.GenerateQRCodeWithEncryptedData(qrCodeDetails, []byte(api.config.KEY_ELATED), []byte(api.config.IV_ELATED), smallImage)
 	if generateQrerr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Error generating QR code",
+			"message": "Error generating QR code: " + generateQrerr.Error(),
 		})
 	}
 

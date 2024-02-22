@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,13 +11,19 @@ import (
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
 	"github.com/stripe/stripe-go/v76"
 	"github.com/stripe/stripe-go/v76/paymentintent"
+	"github.com/stripe/stripe-go/v76/webhook"
 )
 
 func (api *API) Webhook(c *gin.Context) {
-	var event stripe.Event
+	payload, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		fmt.Println("Error reading request body: ", err.Error())
+		return
+	}
 
-	if err := c.ShouldBindJSON(&event); err != nil {
-		fmt.Println("Error binding event: ", err.Error())
+	event, err := webhook.ConstructEvent(payload, c.GetHeader("Stripe-Signature"), api.config.STRIPE_WEBHOOK_SECRET)
+	if err != nil {
+		fmt.Println("Error verifying webhook signature: ", err.Error())
 		return
 	}
 
