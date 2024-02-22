@@ -22,6 +22,7 @@ type QRCodeDetails struct {
 	ProductName       string
 	Description       string
 	Package           string
+	BasePrice         string
 	PriceWithDiscount string
 	Date              string
 }
