@@ -145,7 +145,7 @@ func (api *API) SendApplicationMail(req Applicant) error {
 
 func (api *API) SendApplicationElatedMail(req Applicant) error {
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
-	to := mail.NewEmail(req.FirstName+" "+req.LastName, "blueandraedevera@gmail.com")
+	to := mail.NewEmail(req.FirstName+" "+req.LastName, "info@elated.io")
 	subject := "Application Submission - " + req.FirstName+" "+req.LastName + " for " + req.JobTitle + " Position"
 	fmt.Println("Sending Application Elated email")
 
@@ -273,7 +273,7 @@ func (api *API) SendBetaMail(req BetaList) error {
 
 func (api *API) SendContactUsMail(req ContactUs) error {
 	from := mail.NewEmail("info@elated.io", api.config.SENDGRID_EMAIL_FROM)
-	to := mail.NewEmail(req.FirstName+" "+req.LastName, req.Email)
+	to := mail.NewEmail(req.FirstName+" "+req.LastName, "info@elated.io")
 	subject := "Elated Contact Us Inquiry"
 	fmt.Println("Sending Inquiry email")
 
