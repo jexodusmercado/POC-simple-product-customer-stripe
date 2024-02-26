@@ -96,3 +96,18 @@ func (api *API) CheckUserExists(c *gin.Context) {
 
 	c.JSON(http.StatusOK, exists)
 }
+
+
+func (api *API) UnsubscribeUser(c *gin.Context) {
+	email := c.Param("email")
+
+	user, err := models.UnsubscribeUser(api.db, email)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, user)
+}

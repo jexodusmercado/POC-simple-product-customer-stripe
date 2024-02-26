@@ -57,6 +57,7 @@ func (api *API) CreateApplicant(ctx *gin.Context) {
 		ApplicationDate:   applicant.ApplicationDate,
 		ApplicantFileName: file.Filename,
 		ApplicantAttachment: fileBytes,
+		FileUrl:  applicant.FileURL,
 	}
 
 	emailErr := api.SendApplicationMail(applicantReq)

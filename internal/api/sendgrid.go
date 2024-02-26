@@ -39,6 +39,7 @@ type Applicant struct {
 	ApplicationDate     *time.Time
 	ApplicantAttachment []byte
 	ApplicantFileName   string
+	FileUrl    string
 }
 
 type BetaList struct {
