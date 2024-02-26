@@ -69,6 +69,7 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 	user.GET("", api.GetUsers)
 	user.GET("/:id", api.GetUser)
 	user.GET("/exist/:email", api.CheckUserExists)
+	user.POST("/unsubscribe/:email", api.UnsubscribeUser)
 
 	product := api.handler.Group("products")
 

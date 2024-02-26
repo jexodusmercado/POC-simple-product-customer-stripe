@@ -15,7 +15,7 @@ type User struct {
 	ZipCode     string     `gorm:"type:varchar(255); not null;" json:"zip_code,omitempty"`
 	PhoneNumber string     `gorm:"type:varchar(255)" json:"phone_number,omitempty"`
 	IsJoinBeta  *time.Time `gorm:"nullable" json:"is_join_beta,omitempty"`
-	Unsubscribed bool       `gorm:"default:false" json:"unsubscribed"`
+	IsUnsubscribed *time.Time `gorm:"nullable" json:"is_join_beta,omitempty"`
 }
 
 type CreateUserRequest struct {
@@ -103,8 +103,9 @@ func UnsubscribeUser(tx *gorm.DB, email string) (User, error) {
     if err != nil {
         return user, err
     }
-
-    user.Unsubscribed = true
+	
+    currentTime := time.Now()
+    user.IsUnsubscribed = &currentTime
     tx.Save(user)
 
 	return user, err
