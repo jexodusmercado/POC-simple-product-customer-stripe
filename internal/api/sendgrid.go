@@ -355,11 +355,21 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 	currentTime := time.Now()
 	currentDateString := currentTime.Format("2006-01-02 15:04:05")
 
+	var isEarlyAccess bool
+
+	if user.IsJoinBeta != nil && !user.IsJoinBeta.IsZero() {
+    	isEarlyAccess = true
+	} else {
+    	isEarlyAccess = false
+	}
+
 	qrCodeDetails := helper.QRCodeDetails{
 		UserID:            user.ID.String(),
 		ProductID:         product.ID.String(),
 		TransactionID:     transaction.ID.String(),
+		TransactionType:   "PURCHASE.SPARKFLIRT",
 		UserName:          user.FirstName + " " + user.LastName,
+		IsUserEarlyAccess: isEarlyAccess,
 		ProductName:       product.Name,
 		Description:       product.Description,
 		Package:           strconv.Itoa(product.Quantity),

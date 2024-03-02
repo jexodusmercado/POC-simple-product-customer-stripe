@@ -53,7 +53,7 @@ func GetTransactions(tx *gorm.DB) ([]Transaction, error) {
 
 }
 
-func GetTransactionByID(tx *gorm.DB, id string) (Transaction, error) {
+func GetTransactionByID(tx *gorm.DB, id uuid.UUID) (Transaction, error) {
 
 	var transaction Transaction
 

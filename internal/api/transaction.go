@@ -1,6 +1,8 @@
 package api
 
 import (
+	"github.com/google/uuid"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jexodusmercado/POC-simple-product-customer-stripe/internal/models"
 )
@@ -18,9 +20,17 @@ func (api *API) GetTransactions(c *gin.Context) {
 }
 
 func (api *API) GetTransaction(c *gin.Context) {
-	ID := c.Query("id")
+	id := c.Param("id")
 
-	transaction, err := models.GetTransactionByID(api.db, ID)
+	transactionID, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	transaction, err := models.GetTransactionByID(api.db, transactionID)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
