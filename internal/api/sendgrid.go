@@ -369,6 +369,7 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
 		TransactionID:     transaction.ID.String(),
 		TransactionType:   "PURCHASE.SPARKFLIRT",
 		UserName:          user.FirstName + " " + user.LastName,
+		UserEmail:         user.Email,
 		IsUserEarlyAccess: isEarlyAccess,
 		ProductName:       product.Name,
 		Description:       product.Description,
