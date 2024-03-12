@@ -91,6 +91,7 @@ func NewAPIWithVersion(handler *gin.Engine, db *gorm.DB, conf *conf.GlobalConfig
 
 	applicant.POST("", api.CreateApplicant)
 	applicant.GET("", api.GetAllApplicants)
+	applicant.GET("/:id", api.GetApplicantById)
 
 	qr := api.handler.Group("qr")
 
