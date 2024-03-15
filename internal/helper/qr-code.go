@@ -21,6 +21,7 @@ type QRCodeDetails struct {
 	TransactionType   string
 	UserName          string
 	UserEmail         string
+	UserZipCode       string
 	IsUserEarlyAccess  bool
 	ProductName       string
 	Description       string
