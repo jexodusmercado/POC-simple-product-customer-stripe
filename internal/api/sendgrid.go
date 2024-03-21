@@ -363,21 +363,26 @@ func (api *API) SendQrCodeMail(db *gorm.DB, c *gin.Context, user models.User, tr
     	isEarlyAccess = false
 	}
 
+	basePrice := product.BasePrice
+	discountedPrice := product.DiscountedPrice
+	discountPercentage := (basePrice - discountedPrice) / basePrice * 100
+
 	qrCodeDetails := helper.QRCodeDetails{
-		UserID:            user.ID.String(),
-		ProductID:         product.ID.String(),
-		TransactionID:     transaction.ID.String(),
-		TransactionType:   "PURCHASE.SPARKFLIRT",
-		UserName:          user.FirstName + " " + user.LastName,
-		UserEmail:         user.Email,
-		UserZipCode:       user.ZipCode,
-		IsUserEarlyAccess: isEarlyAccess,
-		ProductName:       product.Name,
-		Description:       product.Description,
-		Package:           strconv.Itoa(product.Quantity),
-		BasePrice:         strconv.FormatFloat(product.BasePrice, 'f', -1, 64),
-		PriceWithDiscount: strconv.FormatFloat(product.DiscountedPrice, 'f', -1, 64),
-		Date:              currentDateString,
+		UserID:            	  user.ID.String(),
+		ProductID:         	  product.ID.String(),
+		TransactionID:     	  transaction.ID.String(),
+		TransactionType:   	  "PURCHASE.SPARKFLIRT",
+		UserName:          	  user.FirstName + " " + user.LastName,
+		UserEmail:         	  user.Email,
+		UserZipCode:       	  user.ZipCode,
+		IsUserEarlyAccess: 	  isEarlyAccess,
+		ProductName:       	  product.Name,
+		Description:       	  product.Description,
+		Package:           	  strconv.Itoa(product.Quantity),
+		BasePrice:         	  strconv.FormatFloat(product.BasePrice, 'f', -1, 64),
+		PriceWithDiscount: 	  strconv.FormatFloat(product.DiscountedPrice, 'f', -1, 64),
+		DiscountInPercentage: strconv.FormatFloat(discountPercentage, 'f', -1, 64),
+		Date:                 currentDateString,
 	}
 
 	// Load the small image from its URL or any other source

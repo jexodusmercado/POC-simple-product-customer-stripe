@@ -15,20 +15,21 @@ import (
 )
 
 type QRCodeDetails struct {
-	UserID            string
-	ProductID         string
-	TransactionID     string
-	TransactionType   string
-	UserName          string
-	UserEmail         string
-	UserZipCode       string
-	IsUserEarlyAccess  bool
-	ProductName       string
-	Description       string
-	Package           string
-	BasePrice         string
-	PriceWithDiscount string
-	Date              string
+	UserID            	 string
+	ProductID         	 string
+	TransactionID     	 string
+	TransactionType   	 string
+	UserName          	 string
+	UserEmail         	 string
+	UserZipCode       	 string
+	IsUserEarlyAccess    bool
+	ProductName       	 string
+	Description       	 string
+	Package           	 string
+	BasePrice            string
+	PriceWithDiscount    string
+	DiscountInPercentage string
+	Date              	 string
 }
 
 func GenerateQRCode(encryptedData string) ([]byte, error) {
